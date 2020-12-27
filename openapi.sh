@@ -1,0 +1,1 @@
+openapi-generator generate -g kotlin -i recipepuppy.yaml --library multiplatform -o NetworkLayer
