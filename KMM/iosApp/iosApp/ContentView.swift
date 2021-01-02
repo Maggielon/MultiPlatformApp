@@ -6,13 +6,32 @@ func greet() -> String {
 }
 
 struct ContentView: View {
+    
+    @State var recipes: [Recipe] = []
+    
     var body: some View {
-        Text(greet())
+        VStack {
+            Text(greet())
+            List(self.recipes) { item in
+                Text(item.id)
+            }
+        }.onAppear {
+            ListViewModel().list(ingredients: "lattuce", query: "", page: 1, completionHandler: { list, error  in
+                self.recipes = list?.results ?? []
+            })
+        }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+extension Recipe: Identifiable {
+    
+    public var id: String {
+        href
     }
 }
