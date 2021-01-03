@@ -1,37 +1,36 @@
 import SwiftUI
 import shared
 
-func greet() -> String {
-    return Greeting().greeting()
-}
-
 struct ContentView: View {
     
-    @State var recipes: [Recipe] = []
+    @ObservedObject var viewModel: ContentViewModel
     
     var body: some View {
         VStack {
-            Text(greet())
-            List(self.recipes) { item in
-                Text(item.id)
+            Text("Recipes list")
+                .font(.largeTitle)
+            TextField("Search ingredients", text: $viewModel.searchText)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .padding(.horizontal, 10)
+            List(self.viewModel.recipes) { item in
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(item.mainTitle)
+                        .font(.headline)
+                    Text("Ingredients: \(item.ingredientsList)")
+                    Button(action: {
+                        if let url = URL(string: item.href) {
+                            UIApplication.shared.open(url)
+                        }
+                    }) {
+                        Text("List: \(item.href)")
+                        .font(.footnote)
+                        .foregroundColor(Color.blue)
+                    }
+                    
+                }.padding(.vertical, 10)
             }
         }.onAppear {
-            ListViewModel().list(ingredients: "lattuce", query: "", page: 1, completionHandler: { list, error  in
-                self.recipes = list?.results ?? []
-            })
+            self.viewModel.fetch()
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
-}
-
-extension Recipe: Identifiable {
-    
-    public var id: String {
-        href
     }
 }
