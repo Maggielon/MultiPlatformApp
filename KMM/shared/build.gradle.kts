@@ -33,11 +33,13 @@ kotlin {
     }
     val ktorVersion = "1.4.0"
     val serializationVersion = "1.0.0-RC"
+    val coroutinesVersion = "1.3.9-native-mt"
 
     sourceSets {
         val commonMain by getting {
             dependencies {
 //                implementation("dev.icerock.moko:network:0.8.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
 //                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
@@ -52,6 +54,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
                 implementation("com.google.android.material:material:1.2.1")
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
             }

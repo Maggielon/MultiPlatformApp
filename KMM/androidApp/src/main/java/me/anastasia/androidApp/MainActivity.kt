@@ -2,19 +2,37 @@ package me.anastasia.androidApp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import me.anastasia.shared.Greeting
-import android.widget.TextView
+import me.anastasia.shared.*
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.*
 
-fun greet(): String {
-    return Greeting().greeting()
-}
+class MainActivity : AppCompatActivity(), CoroutineScope {
 
-class MainActivity : AppCompatActivity() {
+    private val job = Job()
+    override val coroutineContext = job + Dispatchers.Main
+
+    private var list: RecyclerView? = null
+    private var adapter = RecipesAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val tv: TextView = findViewById(R.id.text_view)
-        tv.text = greet()
+        list = findViewById<RecyclerView>(R.id.list)
+        list?.layoutManager = LinearLayoutManager(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        launch {
+            val result = ListViewModel().list(ingredients = "", query = "", page = 1)
+            onResult(result)
+        }
+    }
+
+    fun onResult(result: RecipeList) {
+        list?.adapter = adapter
+        this.adapter.updateItems(result.results ?: emptyList())
     }
 }
